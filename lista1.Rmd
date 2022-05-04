@@ -42,13 +42,75 @@ c.  Classifique cada variável como numérica ou alfanumérica e indique o núme
 
 ### Resposta
 
+a.  O arquivo pode ser importado utilizando o comando `read_excel` do pacote `readxl`.
+
+b.  Saída abaixo.
+
+c.  Classifique cada variável como numérica ou alfanumérica e indique o número de observações omissas de cada uma delas.
+
+```{r cidades, echo=FALSE}
+# Importando arquivo cidades
+library(readxl)
+cidades <- read_excel("data/cidades.xls")
+
+# Resumo das variáveis
+summary(cidades)
+
+columns(cidades)
+
+# Observações omissas
+summary(is.na(cidades))
+```
+
 ## Cap. 3 - Ex. 4
 
 ### Enunciado
 
-Considere as variáveis `Peso` e `Altura` de homens do conjunto de dados `rehabcardio`. Determine o número de classes para os historogramas correspondentes por meio de (3.26) e (3.27) e construa-os.
+Considere o arquivo vento. Observe o valor atípico 61.1, que na realidade ocorreu devido a uma forte tempestade no dia 2 de dezembro. Calcule as medidas de posição e dispersão apresentadas na Seção 3.3. Quantifique o efeito do valor atípico indicado nessas medidas.
 
 ### Resposta
+
+```{r cap3ex4, echo=FALSE}
+library(readxl)
+vento <- read_excel("data/vento.xls")
+vel_vento = vento$vt
+
+# Calculando medidas de posição
+# (média aritmética, mediana, meia média, quartis)
+
+print("Resumo (TOTAL)")
+resumo_total <- summary(vel_vento) # min/max, q1, q2, q3, média, mediana
+resumo_total
+
+
+print("Resumo (ajustado, removendo valor atípico, 61,1)")
+remov <- vel_vento[vel_vento < max(vel_vento)]
+resumo_remov <- summary(remov)
+resumo_remov
+
+print("Diferença (com vl. atípico - sem vl. atípico)")
+resumo_total - resumo_remov
+
+print("Resumo (alpha = 0.25 / meia média)")
+alpha = 0.25
+resumo_meia <- summary(
+  vel_vento[vel_vento > quantile(vel_vento, alpha) & vel_vento < quantile(vel_vento, 1-alpha)]
+)
+resumo_meia
+
+
+# Calculando medidas de dispersão
+dispersao <- function(arg, name) {
+  sprintf("Dispersão (%s): Variância: %6.2f | Desvio Padrão: %6.2f | Desvio médio %6.2f", name, var(arg), sd(arg), mad(arg))
+}
+
+dispersao(vel_vento, "Total")
+dispersao(remov, "Ajustado")
+
+print("Diferença nas medidas de dispersão (com vl. atípico - sem vl. atípico)")
+  sprintf("Variância: %6.2f | Desvio Padrão: %6.2f | Desvio médio %6.2f", var(vel_vento) - var(remov), sd(vel_vento) - sd(remov), mad(vel_vento) - mad(remov))
+
+```
 
 ## Cap. 3 - Ex. 5
 
@@ -58,13 +120,44 @@ Construa gráficos ramo-e-folhas e *boxplot* para os dados do Exercício 4.
 
 ### Resposta
 
+```{r cap3ex5, echo=FALSE}
+stem(vel_vento)
+
+boxplot(vel_vento, horizontal=TRUE)
+pontos <- c(boxplot.stats(vel_vento)$stats, max(vel_vento))
+text(x = pontos[-1], labels = c(vel_vento[-1]), y = 1.3)
+text(x = pontos[1], labels = c(vel_vento[1]), y = 1.2)
+
+```
+
 ## Cap. 3 - Ex. 6
 
 ### Enunciado
 
-Transforme os dados do Exercício 4 por meio de (3.23) com *p* = 0,1/4,1/3,1/2,3/4 e escolha a melhor alternativa de acordo com a medida $d_p$ dada em 3.24.
+Transforme os dados do Exercício 4 por meio de (3.23) com *p* = 0, 1/4, 1/3, 1/2, 3/4 e escolha a melhor alternativa de acordo com a medida $d_p$ dada em 3.24.
 
 ### Resposta
+
+```{r cap3ex6, echo=FALSE}
+vento <- read_excel("data/vento.xls")
+
+dp <- function(data) {
+  return(mean(data) - median(data)) / mad(data)
+}
+
+p <- 0
+sprintf("p = %5.2f, dp = %5.2f", p, dp(log10(vel_vento)))
+p <- 1/4
+sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+p <- 1/3
+sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+p <- 1/2
+sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+p <- 3/4
+sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+```
+
+$p_{\text{otimo}} = 0$
 
 ## Cap. 3 - Ex. 13
 
