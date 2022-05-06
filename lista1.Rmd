@@ -42,24 +42,131 @@ c.  Classifique cada variável como numérica ou alfanumérica e indique o núme
 
 ### Resposta
 
-a.  O arquivo pode ser importado utilizando o comando `read_excel` do pacote `readxl`.
+a.  O arquivo pode ser importado utilizando o comando `read_excel` do pacote `readxl`. Foi necessário remover as duas últimas entradas, pois elas eram agregações de outras entradas. Também foi necessário buscar as quantidades de observações omissas verificando se o valor da coluna era igual a "-".
 
 b.  Saída abaixo.
 
-c.  Classifique cada variável como numérica ou alfanumérica e indique o número de observações omissas de cada uma delas.
+c.  Variáveis
+
+d.  <div>
+
+    -   MUNIC
+
+        -   Alfanumérica
+
+        -   0 observações omissas
+
+    -   UF
+
+        -   Alfanumérica
+
+        -   0 observações omissas
+
+    -   CODIGO
+
+        -   Numérica
+
+        -   0 observações omissas
+
+    -   POPTOP
+
+        -   Numérica
+
+        -   0 observações omissas
+
+    -   CRES_POP
+
+        -   Numérica
+
+        -   0 observações omissas
+
+    -   POPURB
+
+        -   Numérica
+
+        -   0 observações omissas
+
+    -   PIBTOT
+
+        -   Numérica
+
+        -   14 observações omissas
+
+    -   CRES_PIB
+
+        -   Numérica
+
+        -   14 observações omissas
+
+    -   GRAU1
+
+        -   Numérica
+
+        -   13 observações omissas
+
+    -   GRAU2
+
+        -   Numérica
+
+        -   13 observações omissas
+
+    -   SUPERIOR
+
+        -   Numérica
+
+        -   13 observações omissas
+
+    -   11OUMAIS
+
+        -   Numérica
+
+        -   13 observações omissas
+
+    -   EMPREGAD
+
+        -   Numérica
+
+        -   14 observações omissas
+
+    -   MICROEMP
+
+        -   Numérica
+
+        -   14 observações omissas
+
+    -   PEQEMP
+
+        -   Numérica
+
+        -   14 observações omissas
+
+    -   MEDEMP
+
+        -   Numérica
+
+        -   14 observações omissas
+
+    -   GRAENP
+
+        -   Numérica
+
+        -   14 observações omissas
+
+    </div>
+
+cidades.isna()
 
 ```{r cidades, echo=FALSE}
 # Importando arquivo cidades
 library(readxl)
 cidades <- read_excel("data/cidades.xls")
+cidades <- head(cidades, -2)
 
 # Resumo das variáveis
 summary(cidades)
 
-columns(cidades)
-
 # Observações omissas
-summary(is.na(cidades))
+summary(cidades == "-")
 ```
 
 ## Cap. 3 - Ex. 4
@@ -204,6 +311,12 @@ b.  Com o medicamento A, a probabilidade de cura de sua dor de cabeça antes de 
 c.  Com o medicamento B, a probabilidade de você ter sua dor de cabeça curada antes de 60 seg é maor do que com o medicamento A.
 
 ### Resposta
+
+a.  Verdadeiro (?)
+
+b.  Falso, porque é mais provável que o medicamento B se desvie da média (60 seg) para esse valor (\< 40 seg)
+
+c.  Falso (?)
 
 ## Cap. 3 - Ex. 33
 
