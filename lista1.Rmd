@@ -4,7 +4,7 @@ output: pdf_document
 date: '2022-05-01'
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -17,6 +17,10 @@ Integrantes:
 -   Cainã Setti Galante - 10737115
 
 -   Daniel B. Reis - 7257437
+
+-   Bruno Carneiro da Cunha - 10376388
+
+-   Bento Pereira -
 
 ## Cap. 2 - Ex. 2
 
@@ -48,7 +52,7 @@ b.  Saída abaixo.
 
 c.  Variáveis
 
-d.  <div>
+    <div>
 
     -   MUNIC
 
@@ -154,9 +158,7 @@ d.  <div>
 
     </div>
 
-cidades.isna()
-
-```{r cidades, echo=FALSE}
+```{r cidades, echo=TRUE}
 # Importando arquivo cidades
 library(readxl)
 cidades <- read_excel("data/cidades.xls")
@@ -177,7 +179,7 @@ Considere o arquivo vento. Observe o valor atípico 61.1, que na realidade ocorr
 
 ### Resposta
 
-```{r cap3ex4, echo=FALSE}
+```{r cap3ex4, echo=TRUE}
 library(readxl)
 vento <- read_excel("data/vento.xls")
 vel_vento = vento$vt
@@ -219,6 +221,36 @@ print("Diferença nas medidas de dispersão (com vl. atípico - sem vl. atípico
 
 ```
 
+### Medidas de posição
+
+-   Média: 18.40
+
+    -   Sem valor atípico: 15.35
+
+-   Mediana: 14.80
+
+    -   Sem valor atípico: 13.9
+
+-   Média aparada/meia média ($\alpha = 0.25$): 16.16
+
+-   Quartis (Mín/Q1/Mediana/Q3/Máx): 7.4; 9.25; 14.8; 21.3; 61.1
+
+    -   Sem valor atípico: 7.4; 8.325; 13.9; 20.4; 27.8
+
+### Medidas de dispersão
+
+-   Variância: 182.94
+
+    -   Sem valor atípico: 46.74
+
+-   Desvio padrão: 13.53
+
+    -   Sem valor atípico: 6.84
+
+-   Desvio médio: 10.97
+
+    -   Sem valor atípico: 9.64
+
 ## Cap. 3 - Ex. 5
 
 ### Enunciado
@@ -227,14 +259,11 @@ Construa gráficos ramo-e-folhas e *boxplot* para os dados do Exercício 4.
 
 ### Resposta
 
-```{r cap3ex5, echo=FALSE}
+```{r cap3ex5, echo=TRUE}
 stem(vel_vento)
 
 boxplot(vel_vento, horizontal=TRUE)
 pontos <- c(boxplot.stats(vel_vento)$stats, max(vel_vento))
-text(x = pontos[-1], labels = c(vel_vento[-1]), y = 1.3)
-text(x = pontos[1], labels = c(vel_vento[1]), y = 1.2)
-
 ```
 
 ## Cap. 3 - Ex. 6
@@ -245,23 +274,35 @@ Transforme os dados do Exercício 4 por meio de (3.23) com *p* = 0, 1/4, 1/3, 1/
 
 ### Resposta
 
-```{r cap3ex6, echo=FALSE}
-vento <- read_excel("data/vento.xls")
+Definimos a função de transformação e a atribuímos à variável `x_func` , o mesmo foi feito para a função de medida de assimetria e `dp`. Após executar os cálculos com os valores, concluímos que a melhor alternativa é $p = 0$, pois minimiza $d_p$ em relação aos outros valores.
+
+```{r cap3ex6, echo=TRUE}
+vento <- read_excel("data/vento.xls")$vt
+
+x_func <- function(x, p) {
+  if (p == 0) {
+    return(log10(x))
+  }
+  if (p < 0) {
+    return( - (x ^ p))
+  }
+  return(x ^ p)
+}
 
 dp <- function(data) {
   return(mean(data) - median(data)) / mad(data)
 }
 
 p <- 0
-sprintf("p = %5.2f, dp = %5.2f", p, dp(log10(vel_vento)))
+sprintf("p = %5.2f, dp = %5.2f", p, dp(x_func(vento, p)))
 p <- 1/4
-sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+sprintf("p = %5.2f, dp = %5.2f", p, dp(x_func(vento, p)))
 p <- 1/3
-sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+sprintf("p = %5.2f, dp = %5.2f", p, dp(x_func(vento, p)))
 p <- 1/2
-sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+sprintf("p = %5.2f, dp = %5.2f", p, dp(x_func(vento, p)))
 p <- 3/4
-sprintf("p = %5.2f, dp = %5.2f", 0, dp(vel_vento ^ p))
+sprintf("p = %5.2f, dp = %5.2f", p, dp(x_func(vento, p)))
 ```
 
 $p_{\text{otimo}} = 0$
@@ -277,6 +318,10 @@ a.  Descreva a distribuição da variável consumo do oxigênio (VO2) em cada um
 b.  Descreva a distribuição da classe funcional NYHA por meio de uma tabela de frequências. Utilize um método gráfico para representar essa tabela.
 
 ### Resposta
+
+```{r cap3ex13a, echo = TRUE}
+dados <- read_excel("data/esforco.xls", sheet = "dados")
+```
 
 ## Cap. 3 - Ex. 17
 
@@ -308,15 +353,15 @@ a.  Os medicamentos são totalmente equivalentes com relação ao tempo para efe
 
 b.  Com o medicamento A, a probabilidade de cura de sua dor de cabeça antes de 40 seg é maior do que com o medicamento B.
 
-c.  Com o medicamento B, a probabilidade de você ter sua dor de cabeça curada antes de 60 seg é maor do que com o medicamento A.
+c.  Com o medicamento B, a probabilidade de você ter sua dor de cabeça curada antes de 60 seg é maior do que com o medicamento A.
 
 ### Resposta
 
 a.  Verdadeiro (?)
 
-b.  Falso, porque é mais provável que o medicamento B se desvie da média (60 seg) para esse valor (\< 40 seg)
+b.  Falso, porque é mais provável que o tempo para efeito medicamento B se desvie da média (60 seg) para esse valor (\< 40 seg)
 
-c.  Falso (?)
+c.  Verdadeiro, porque é mais provável que o tempo para efeito do medicamento B se desvie da média.
 
 ## Cap. 3 - Ex. 33
 
@@ -333,3 +378,55 @@ c.  Repita os passos a) e b) com amostras de tamanhos $n = 9$ e $n = 100$. Comen
 d.  Repita os passos a) - c) simulando amostras de uma distribuição qui-quadrado com 3 graus de liberdade.
 
 ### Resposta
+
+**a)**
+
+```{r cap3ex33a, echo=TRUE}
+MEAN = 12
+SD = 4
+sim <- rnorm(10000, 12, 4)
+
+hist(sim)
+sprintf("Média: %.3f | Desvio padrão: %.3f", MEAN, SD)
+sprintf("Média amostral: %.3f | Desvio padrão amostral: %.3f", mean(sim), sd(sim))
+sprintf("Dif. Média: %.3f | Dif. Desvio padrão: %.3f", abs(MEAN-mean(sim)), abs(sd(sim) - SD))
+
+```
+
+É possível verificar que a amostra possui média e desvio padrão próximos aos parâmetros utilizados para gerar os dados.
+
+**b,c)**
+
+```{r cap3ex33bc, echo=TRUE}
+
+run_sample_test <- function(sample, n) {
+  SAMPLE_COUNT = 500
+  samples_means <- replicate(SAMPLE_COUNT, mean(sample(sample, n)))
+  hist(samples_means, main  = 
+  sprintf("n = %d | Erro padrão da média: %.2f", n, sd(samples_means)))
+}
+
+run_sample_test(sim, 4)
+run_sample_test(sim, 9)
+run_sample_test(sim, 100)
+```
+
+Assim como preconizado pela teoria, o erro padrão da média tende a diminuir conforme o tamanho das amostras aumenta.
+
+**d)**
+
+```{r cap3ex33d, echo=TRUE}
+k = 3
+sim_chisq <- rchisq(10000, df=k)
+
+hist(sim_chisq)
+sprintf("Média: %.3f | Desvio padrão: %.3f", k, sqrt(2 * k))
+sprintf("Média amostral: %.3f | Desvio padrão amostral: %.3f", mean(sim_chisq), sd(sim_chisq))
+sprintf("Dif. Média: %.3f | Dif. Desvio padrão: %.3f", abs(k-mean(sim_chisq)), abs(sd(sim_chisq) - sqrt(2 * k)))
+
+run_sample_test(sim_chisq, 4)
+run_sample_test(sim_chisq, 9)
+run_sample_test(sim_chisq, 100)
+```
+
+Assim como visto anteriormente, o erro padrão da média tende a diminuir conforme o tamanho das amostras aumenta.
