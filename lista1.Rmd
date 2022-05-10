@@ -327,8 +327,32 @@ b.  Descreva a distribuição da classe funcional NYHA por meio de uma tabela de
 
 ### Resposta
 
+**a)**
+
 ```{r cap3ex13a, echo = TRUE}
-dados <- read_excel("data/esforco.xls", sheet = "dados")
+options(warn = -1)
+dados <- suppressMessages(read_excel("data/esforco.xls", sheet = "dados"))
+dados_vo2 <- dados[, c(14, 24, 37, 49)]
+dados_vo2 <- dados_vo2[c(-1, -2),]
+headers_vo2 <- c("REP", "LAN", "PCR", "PICO")
+for(i in 1:ncol(dados_vo2)) {       # for-loop over columns
+  coluna = as.numeric(unlist(dados_vo2[, i]))
+  cat(headers_vo2[i], "\n")
+  print(summary(coluna))
+  boxplot(coluna, main=headers_vo2[i], ylab="consumo de oxigênio em ml/(kg.min)")
+  hist(coluna, main=headers_vo2[i], xlab="consumo de oxigênio em ml/(kg.min)")
+  cat("\n")
+}
+```
+
+A variável VO2 apresenta uma distribuição normal centrada em valores diretamente proporcionais à intensidade do esforço cardiopulmonar. Também vale notar que quanto maior o esforço, maior o desvio padrão amostral. O indivíduo Ident 42, Iniciais AC, demonstrou um desempenho muito acima do comum, com o seu VO2 no PICO sendo o maior da tabela, exatamente 10 vezes o seu VO2 em repouso.
+
+**b)**
+
+```{r cap3ex13b, echo = TRUE}
+dados_nyha <- dados[c(-1, -2), c(11)]
+table(dados_nyha)
+hist(as.numeric(unlist(dados_nyha)), main="classe funcional pelo critério NYHA (1 a 4)")
 ```
 
 ## Cap. 3 - Ex. 17
@@ -373,7 +397,7 @@ c.  Com o medicamento B, a probabilidade de você ter sua dor de cabeça curada 
 
 ### Resposta
 
-a.  Verdadeiro (?)
+a.  Verdadeiro.
 
 b.  Falso, porque é mais provável que o tempo para efeito medicamento B se desvie da média (60 seg) para esse valor (\< 40 seg)
 
