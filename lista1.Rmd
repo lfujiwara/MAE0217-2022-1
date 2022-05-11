@@ -1,5 +1,5 @@
 ---
-title: "lista1"
+title: "&nbsp;"
 output: pdf_document
 date: '2022-05-01'
 ---
@@ -31,6 +31,14 @@ A Figura 2.6 foi extraída de um estudo sobre atitudes de profissionais de saúd
 ![](images/paste-73E69487.png)
 
 ### Resposta
+
+Seguindo as recomendações de Morettin & Singer, não é bom que a abreviação "min-max" seja usada sem nenhum tipo de explicação no rodapé. O correto seria que o rodapé tivesse uma linha "Min-Max: Valor Mínimo Amostral e Máximo Amostral".
+
+Levando em conta que comparar informações é mais fácil ao longo de linhas do que de colunas, seria recomendado também inverter as linhas com as colunas, de maneira que as categorias profissionais ficassem nas colunas, e os diferentes domínios da saúde nas linhas.
+
+Há um excesso de informações no cabeçalho de cada linha, e consequentemente não fica claro rapidamente que cada linha se refere a uma categoria profissional. Recomendaria que fosse feita uma escolha entre a média e a mediana, porque incluir ambas as medidas resumo dificulta a comparação dos dados. O desvio padrão também não é significativamente diferente entre as amostras, por isso poderia ser omitido.
+
+![](images/ex2_tabela.png)
 
 ## Cap. 2 - Ex. 8
 
@@ -319,8 +327,32 @@ b.  Descreva a distribuição da classe funcional NYHA por meio de uma tabela de
 
 ### Resposta
 
+**a)**
+
 ```{r cap3ex13a, echo = TRUE}
-dados <- read_excel("data/esforco.xls", sheet = "dados")
+options(warn = -1)
+dados <- suppressMessages(read_excel("data/esforco.xls", sheet = "dados"))
+dados_vo2 <- dados[, c(14, 24, 37, 49)]
+dados_vo2 <- dados_vo2[c(-1, -2),]
+headers_vo2 <- c("REP", "LAN", "PCR", "PICO")
+for(i in 1:ncol(dados_vo2)) {       # for-loop over columns
+  coluna = as.numeric(unlist(dados_vo2[, i]))
+  cat(headers_vo2[i], "\n")
+  print(summary(coluna))
+  boxplot(coluna, main=headers_vo2[i], ylab="consumo de oxigênio em ml/(kg.min)")
+  hist(coluna, main=headers_vo2[i], xlab="consumo de oxigênio em ml/(kg.min)")
+  cat("\n")
+}
+```
+
+A variável VO2 apresenta uma distribuição normal centrada em valores diretamente proporcionais à intensidade do esforço cardiopulmonar. Também vale notar que quanto maior o esforço, maior o desvio padrão amostral. O indivíduo Ident 42, Iniciais AC, demonstrou um desempenho muito acima do comum, com o seu VO2 no PICO sendo o maior da tabela, exatamente 10 vezes o seu VO2 em repouso.
+
+**b)**
+
+```{r cap3ex13b, echo = TRUE}
+dados_nyha <- dados[c(-1, -2), c(11)]
+table(dados_nyha)
+hist(as.numeric(unlist(dados_nyha)), main="classe funcional pelo critério NYHA (1 a 4)")
 ```
 
 ## Cap. 3 - Ex. 17
@@ -343,6 +375,14 @@ d.  Mais da metade dos estudantes com atividade física intensa têm pulsação 
 
 ### Resposta
 
+a\. Falso. 25% e 50% dos estudantes com atividade física intensa e fraca, respectivamente, tiveram pulsação inferior a 70.
+
+b\. Falso. A proporção de estudantes com fraca atividade física com pulsação inferior a 63 é 25%, e a proporção de estudantes com atividade física intensa com pulsação inferior a 70 também é 25%.
+
+c\. Falso, a atividade física parece ter um efeito na média da pulsação, já que os dois grupos apresentaram médias com uma diferença significativa.
+
+d\. Falso. Metade dos estudantes com atividade física intensa têm pulsação maior do que 82.
+
 ## Cap. 3 - Ex. 22
 
 ### Enunciado
@@ -357,7 +397,7 @@ c.  Com o medicamento B, a probabilidade de você ter sua dor de cabeça curada 
 
 ### Resposta
 
-a.  Verdadeiro (?)
+a.  Verdadeiro.
 
 b.  Falso, porque é mais provável que o tempo para efeito medicamento B se desvie da média (60 seg) para esse valor (\< 40 seg)
 
